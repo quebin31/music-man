@@ -2,19 +2,24 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    android:id="@+id/main_navigation"
+    app:startDestination="@+id/navigationSongs">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.musicman.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigationSongs"
+        android:name="com.example.musicman.ui.songs.SongsFragment"
+        android:label="@string/title_songs"
+        tools:layout="@layout/fragment_songs">
+        <action
+            android:id="@+id/action_navigationSongs_to_navigationPlayer"
+            app:destination="@id/navigationPlayer" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.musicman.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigationPlayer"
+        android:name="com.example.musicman.ui.player.PlayerFragment"
+        android:label="@string/title_player"
+        tools:layout="@layout/fragment_player">
+    </fragment>
 
 </navigation>
