@@ -6,12 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".ui.player.PlayerFragment">
 
+    <TextView
+        android:id="@+id/nothingPlaying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nothing_is_being_played"
+        android:textSize="@dimen/song_title_text_size"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
     <ImageView
         android:id="@+id/songAlbumArtwork"
         android:layout_width="@dimen/full_album_image_size"
         android:layout_height="@dimen/full_album_image_size"
-        android:contentDescription="@string/album_artwork_description"
         android:layout_marginBottom="@dimen/padding_double"
+        android:contentDescription="@string/album_artwork_description"
         app:layout_constraintBottom_toTopOf="@id/songTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,28 +37,43 @@
         android:id="@+id/songTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_double"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/song_title_text_size"
         android:textStyle="bold"
-        android:layout_marginHorizontal="@dimen/padding_double"
-        app:layout_constraintTop_toBottomOf="@id/songAlbumArtwork"
+        app:layout_constraintBottom_toTopOf="@id/songArtistAlbum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/songArtistAlbum"
+        app:layout_constraintTop_toBottomOf="@id/songAlbumArtwork"
         tools:text="Song Title" />
 
     <TextView
         android:id="@+id/songArtistAlbum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_double"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textSize="@dimen/song_artist_album_text_size"
+        app:layout_constraintBottom_toTopOf="@id/songTrackDisk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/songTitle"
-        app:layout_constraintBottom_toBottomOf="@id/horizontalGuideline"
-        android:layout_marginHorizontal="@dimen/padding_double"
-        android:maxLines="2"
         tools:text="Song Artist - Song Album" />
+
+    <TextView
+        android:id="@+id/songTrackDisk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_double"
+        android:layout_marginTop="@dimen/padding_half"
+        app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/songArtistAlbum"
+        tools:text="Track: 0 - Disk: 0" />
 
     <ImageButton
         android:id="@+id/playButton"
@@ -57,10 +86,18 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
+        app:layout_constraintVertical_bias="0.2"
         tools:src="@drawable/ic_baseline_play_arrow_24" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/playerGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="songAlbumArtwork,songTitle,songArtistAlbum,songTrackDisk,playButton"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontalGuideline"
