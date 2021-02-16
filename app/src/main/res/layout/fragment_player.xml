@@ -26,6 +26,8 @@
         android:layout_height="@dimen/full_album_image_size"
         android:layout_marginBottom="@dimen/padding_double"
         android:contentDescription="@string/album_artwork_description"
+        android:elevation="@dimen/elevation_standard"
+        android:outlineProvider="bounds"
         app:layout_constraintBottom_toTopOf="@id/songTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,44 +37,61 @@
 
     <TextView
         android:id="@+id/songTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_double"
         android:ellipsize="end"
+        android:gravity="center_horizontal"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/song_title_text_size"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/songArtistAlbum"
+        app:layout_constraintBottom_toTopOf="@id/songArtist"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/songAlbumArtwork"
         tools:text="Song Title" />
 
     <TextView
-        android:id="@+id/songArtistAlbum"
-        android:layout_width="wrap_content"
+        android:id="@+id/songArtist"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_double"
         android:ellipsize="end"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:textSize="@dimen/song_artist_album_text_size"
+        app:layout_constraintBottom_toTopOf="@id/songAlbum"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/songTitle"
+        tools:text="Song Artist" />
+
+    <TextView
+        android:id="@+id/songAlbum"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_double"
+        android:ellipsize="end"
+        android:gravity="center_horizontal"
         android:maxLines="1"
         android:textSize="@dimen/song_artist_album_text_size"
         app:layout_constraintBottom_toTopOf="@id/songTrackDisk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/songTitle"
-        tools:text="Song Artist - Song Album" />
+        app:layout_constraintTop_toBottomOf="@id/songArtist"
+        tools:text="Song Album" />
 
     <TextView
         android:id="@+id/songTrackDisk"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/padding_double"
         android:layout_marginTop="@dimen/padding_half"
+        android:gravity="center_horizontal"
         app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/songArtistAlbum"
+        app:layout_constraintTop_toBottomOf="@id/songAlbum"
         tools:text="Track: 0 - Disk: 0" />
 
     <ImageButton
@@ -81,7 +100,7 @@
         android:layout_height="@dimen/play_button_size"
         android:background="@drawable/play_round_button"
         android:contentDescription="@string/album_artwork_description"
-        android:elevation="@dimen/play_button_elevation"
+        android:elevation="@dimen/elevation_standard"
         android:padding="@dimen/padding_standard"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -96,7 +115,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="songAlbumArtwork,songTitle,songArtistAlbum,songTrackDisk,playButton"
+        app:constraint_referenced_ids="songAlbumArtwork,songTitle,songArtist,songAlbum,songTrackDisk,playButton"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
