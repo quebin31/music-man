@@ -13,13 +13,12 @@ class SongViewHolder(private val binding: ListItemSongBinding) :
     fun bind(context: Context, song: Song, onItemClick: (Song) -> Unit) {
         val unknownString = context.getString(R.string.unknown_string)
 
+        song.artworkBitmap?.let { binding.albumArtwork.setImageBitmap(it)    }
         binding.songTitle.text = song.title ?: unknownString
+
         val artist = song.effectiveArtist ?: unknownString
         val album = song.album ?: unknownString
         binding.songArtistAlbum.text = context.getString(R.string.artist_album, artist, album)
-        song.artworkBitmap?.let {
-            binding.albumArtwork.setImageBitmap(it)
-        }
 
         binding.root.setOnClickListener { onItemClick(song) }
     }

@@ -17,6 +17,7 @@ import com.example.musicman.ui.adapter.SongAdapter
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 class SongsFragment : Fragment(R.layout.fragment_songs) {
+
     private val songsViewModel by viewModels<SongsViewModel>()
     private val binding by viewBinding(FragmentSongsBinding::bind)
     private val adapter by lazy {
