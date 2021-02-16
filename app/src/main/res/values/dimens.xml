@@ -10,4 +10,5 @@
     <dimen name="full_album_image_size">300dp</dimen>
     <dimen name="song_artist_album_text_size">16sp</dimen>
     <dimen name="padding_double">32dp</dimen>
+    <dimen name="padding_half">8dp</dimen>
 </resources>
