@@ -1,4 +1,4 @@
-package com.example.musicman
+package com.example.musicman.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.musicman.R
 import com.example.musicman.databinding.ActivityMainBinding
 import com.example.musicman.extensions.viewBinding
 
@@ -27,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupUi() {
         fun setupNavUi() {
             val appBarConfiguration = AppBarConfiguration(setOf(
-                    R.id.navigationSongs, R.id.navigationPlayer))
+                R.id.songs_fragment, R.id.player_fragment
+            ))
 
             setupActionBarWithNavController(navController, appBarConfiguration)
             binding.navView.setupWithNavController(navController)
