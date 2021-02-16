@@ -20,7 +20,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         super.onViewCreated(view, savedInstanceState)
         playerViewModel.repository = RawSongsRepository(requireContext())
 
-        playerViewModel.repository.getCurrentSong().observe(viewLifecycleOwner) { song ->
+        playerViewModel.currentSong.observe(viewLifecycleOwner) { song ->
             if (song == null)
                 showNothingPlaying()
             else
