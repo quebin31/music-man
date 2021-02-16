@@ -17,7 +17,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private val binding by viewBinding(FragmentPlayerBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         playerViewModel.repository = RawSongsRepository(requireContext())
 
         playerViewModel.currentSong.observe(viewLifecycleOwner) { song ->

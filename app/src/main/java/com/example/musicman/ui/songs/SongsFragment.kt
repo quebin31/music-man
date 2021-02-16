@@ -25,7 +25,6 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         songsViewModel.repository = RawSongsRepository(requireContext())
 
         binding.songsList.layoutManager = LinearLayoutManager(requireActivity())
