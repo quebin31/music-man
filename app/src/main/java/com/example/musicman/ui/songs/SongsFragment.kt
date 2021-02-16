@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicman.R
 import com.example.musicman.databinding.FragmentSongsBinding
-import com.example.musicman.decorations.SimpleItemDecoration
+import com.example.musicman.ui.decorations.SimpleItemDecoration
 import com.example.musicman.model.Song
 import com.example.musicman.repository.RawSongsRepository
 import com.example.musicman.ui.adapter.SongAdapter
