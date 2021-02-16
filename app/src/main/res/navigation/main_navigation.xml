@@ -3,23 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@+id/navigationSongs">
+    app:startDestination="@+id/songs_fragment">
 
     <fragment
-        android:id="@+id/navigationSongs"
+        android:id="@+id/songs_fragment"
         android:name="com.example.musicman.ui.songs.SongsFragment"
         android:label="@string/title_songs"
         tools:layout="@layout/fragment_songs">
         <action
-            android:id="@+id/action_navigationSongs_to_navigationPlayer"
-            app:destination="@id/navigationPlayer" />
+            android:id="@+id/navigate_to_player"
+            app:destination="@id/player_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigationPlayer"
+        android:id="@+id/player_fragment"
         android:name="com.example.musicman.ui.player.PlayerFragment"
         android:label="@string/title_player"
         tools:layout="@layout/fragment_player">
+        <argument
+            android:name="song_id"
+            android:defaultValue="@null"
+            app:argType="string" />
     </fragment>
 
 </navigation>

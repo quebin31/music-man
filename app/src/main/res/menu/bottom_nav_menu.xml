@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigationSongs"
+        android:id="@+id/songs_fragment"
         android:icon="@drawable/ic_baseline_library_music_24"
         android:title="@string/title_songs" />
 
     <item
-        android:id="@+id/navigationPlayer"
+        android:id="@+id/player_fragment"
         android:icon="@drawable/ic_baseline_play_circle_24"
         android:title="@string/title_player" />
 
