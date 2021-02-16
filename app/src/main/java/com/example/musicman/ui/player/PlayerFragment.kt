@@ -15,15 +15,19 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val binding by viewBinding(FragmentPlayerBinding::bind)
+    // TODO: Use media player directly or through media browser service
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         playerViewModel.repository = RawSongsRepository(requireContext())
 
         playerViewModel.currentSong.observe(viewLifecycleOwner) { song ->
-            if (song == null)
+            if (song == null) {
                 showNothingPlaying()
-            else
+            } else {
                 showSongInfoPlaying(song)
+                // TODO: There's a song playing, check the media player status
+                // TODO: Update play/pause button
+            }
         }
     }
 
@@ -52,11 +56,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     override fun onResume() {
         super.onResume()
 
-        Log.i("PlayerFragment", "onResume: resumed")
-
         arguments?.getString("song_id")?.let {
             val song = playerViewModel.repository.getSong(it)
             playerViewModel.setCurrentSong(song ?: return)
+            // TODO: Change current data source from media player if song is different from current
         }
     }
 }
