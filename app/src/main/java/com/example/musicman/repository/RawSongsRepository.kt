@@ -15,7 +15,7 @@ import com.example.musicman.model.Song
 
 class RawSongsRepository(private val context: Context) : SongsRepository {
 
-    private val _currentSong  by lazy {
+    private val _currentSong by lazy {
         MutableLiveData<Song?>().apply {
             value = getCurrentSongFromPrefs()
         }
@@ -78,9 +78,7 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
         _currentSong.value = song
     }
 
-    override fun getCurrentSong(): LiveData<Song?> {
-        return _currentSong
-    }
+    override fun getCurrentSong(): LiveData<Song?> = _currentSong
 
     private fun getCurrentSongFromPrefs(): Song? {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
