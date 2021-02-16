@@ -1,15 +1,25 @@
 package com.example.musicman.repository
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import androidx.core.content.edit
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.musicman.R
 import com.example.musicman.extensions.getAndroidUri
 import com.example.musicman.model.Song
 
 class RawSongsRepository(private val context: Context) : SongsRepository {
+
+    private val _currentSong  by lazy {
+        MutableLiveData<Song?>().apply {
+            value = getCurrentSongFromPrefs()
+        }
+    }
 
     override fun getSongsIds() = listOf("raw1", "raw2", "raw3")
 
@@ -59,10 +69,33 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
         else -> null
     }
 
+    override fun setCurrentSong(song: Song) {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        prefs.edit(commit = true) {
+            putString("current_song", song.id)
+        }
+
+        _currentSong.value = song
+    }
+
+    override fun getCurrentSong(): LiveData<Song?> {
+        return _currentSong
+    }
+
+    private fun getCurrentSongFromPrefs(): Song? {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val songId = prefs.getString("current_song", null) ?: return null
+        return getSong(songId)
+    }
+
     private fun getAlbumArtwork(id: String): Bitmap? {
         val metadataRetriever = MediaMetadataRetriever()
         metadataRetriever.setDataSource(context, getSongUri(id) ?: return null)
         val pictureBytes = metadataRetriever.embeddedPicture
         return BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes?.size ?: return null)
+    }
+
+    companion object {
+        const val PREFS = "RawRepositoryPreferences"
     }
 }
