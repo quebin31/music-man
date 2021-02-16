@@ -4,4 +4,9 @@
     <string name="title_details">Details</string>
     <string name="title_player">Player</string>
     <string name="album_artwork_description">Album Artwork</string>
+    <string name="artist_album">"%1$s - %2$s"</string>
+    <string name="track_disk">"Track: %1$s - Disk: %2$s"</string>
+    <string name="unknown_number">--</string>
+    <string name="unknown_string">Unknown</string>
+    <string name="nothing_is_being_played">Nothing is being played …</string>
 </resources>
