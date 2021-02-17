@@ -1,7 +1,6 @@
 package com.example.musicman.repository
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
@@ -17,7 +16,7 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
 
     private val _currentSong by lazy {
         MutableLiveData<Song?>().apply {
-            value = getCurrentSongFromPrefs()
+            value = getLatestFromPreferences()
         }
     }
 
@@ -69,7 +68,7 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
         else -> null
     }
 
-    override fun setCurrentSong(song: Song) {
+    override fun setLatestPlayedSong(song: Song) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         prefs.edit(commit = true) {
             putString("current_song", song.id)
@@ -78,9 +77,9 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
         _currentSong.value = song
     }
 
-    override fun getCurrentSong(): LiveData<Song?> = _currentSong
+    override fun getLatestPlayedSong(): LiveData<Song?> = _currentSong
 
-    private fun getCurrentSongFromPrefs(): Song? {
+    private fun getLatestFromPreferences(): Song? {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val songId = prefs.getString("current_song", null) ?: return null
         return getSong(songId)

@@ -9,6 +9,6 @@ interface SongsRepository {
     fun getSong(id: String): Song?
     fun getSongs(): List<Song>
     fun getSongUri(id: String): Uri?
-    fun getCurrentSong(): LiveData<Song?>
-    fun setCurrentSong(song: Song)
+    fun getLatestPlayedSong(): LiveData<Song?>
+    fun setLatestPlayedSong(song: Song)
 }
