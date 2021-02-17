@@ -14,6 +14,7 @@ import com.example.musicman.ui.decorations.SimpleItemDecoration
 import com.example.musicman.model.Song
 import com.example.musicman.repository.RawSongsRepository
 import com.example.musicman.ui.adapter.SongAdapter
+import com.example.musicman.ui.player.PlayerFragment
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 class SongsFragment : Fragment(R.layout.fragment_songs) {
@@ -34,7 +35,7 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
     }
 
     private fun onSongItemClick(song: Song) {
-        val bundle = bundleOf("song_id" to song.id)
+        val bundle = bundleOf(PlayerFragment.ARG_SONG_ID to song.id)
         findNavController().navigate(R.id.navigate_to_player, bundle)
     }
 }
