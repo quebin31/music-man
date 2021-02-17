@@ -7,11 +7,13 @@
 
     <ImageView
         android:id="@+id/albumArtwork"
-        android:layout_width="@dimen/album_image_size"
-        android:layout_height="@dimen/album_image_size"
+        android:layout_width="98dp"
+        android:layout_height="98dp"
+        android:layout_margin="@dimen/padding_standard"
         android:contentDescription="@string/album_artwork_description"
-        android:outlineProvider="bounds"
         android:elevation="@dimen/elevation_standard"
+        android:outlineProvider="bounds"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/default_album_artwork" />
