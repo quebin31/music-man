@@ -24,8 +24,10 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
         super.onCreate()
 
         mediaPlayer.setOnCompletionListener {
+
             val newState = PlaybackStateCompat.Builder().run {
                 setState(PlaybackStateCompat.STATE_STOPPED, 0L, 1f)
+                setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
                 build()
             }
 
