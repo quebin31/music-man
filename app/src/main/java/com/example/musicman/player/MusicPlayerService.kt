@@ -33,10 +33,12 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
         }
 
         mediaSession = MediaSessionCompat(applicationContext, TAG).apply {
+            isActive = true
             val playbackState = PlaybackStateCompat.Builder()
-                .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_STOP)
+                .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
                 .build()
 
+            setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
             setPlaybackState(playbackState)
             setSessionToken(sessionToken)
             setCallback(object : MediaSessionCompat.Callback() {
@@ -58,19 +60,8 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                         mediaPlayer.start()
 
                         val position = mediaPlayer.currentPosition
-                        val newState = PlaybackStateCompat.Builder().run {
-                            setState(PlaybackStateCompat.STATE_PLAYING, position.toLong(), 1f)
-                            build()
-                        }
-
-                        setPlaybackState(newState)
-
-                        val notification =
-                            MediaNotificationBuilder(applicationContext, this@apply).run {
-                                build(NOTIFICATION_CHANNEL, showPause = true)
-                            }
-
-                        updateForeground(notification)
+                        updatePlaybackState(PlaybackStateCompat.STATE_PLAYING, position.toLong())
+                        updateNotification(showPause = true)
                     } catch (e: IllegalStateException) {
                         Log.w(TAG, "onPlay: media player is on invalid state")
                     }
@@ -82,19 +73,8 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                         mediaPlayer.pause()
 
                         val position = mediaPlayer.currentPosition
-                        val newState = PlaybackStateCompat.Builder().run {
-                            setState(PlaybackStateCompat.STATE_PAUSED, position.toLong(), 1f)
-                            build()
-                        }
-
-                        setPlaybackState(newState)
-
-                        val notification =
-                            MediaNotificationBuilder(applicationContext, this@apply).run {
-                                build(NOTIFICATION_CHANNEL, showPause = false)
-                            }
-
-                        updateForeground(notification)
+                        updatePlaybackState(PlaybackStateCompat.STATE_PAUSED, position.toLong())
+                        updateNotification(showPause = false)
                     } catch (e: IllegalStateException) {
                         Log.w(TAG, "onPause: media player is on invalid state")
                     }
@@ -105,12 +85,7 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                     try {
                         mediaPlayer.stop()
 
-                        val newState = PlaybackStateCompat.Builder().run {
-                            setState(PlaybackStateCompat.STATE_STOPPED, 0L, 1f)
-                            build()
-                        }
-
-                        setPlaybackState(newState)
+                        updatePlaybackState(PlaybackStateCompat.STATE_STOPPED, 0L)
                         stopForeground()
                         stopSelf()
                     } catch (e: IllegalStateException) {
@@ -118,9 +93,38 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                     }
                 }
 
-            })
+                private fun updatePlaybackState(state: Int, position: Long) {
+                    val newState = PlaybackStateCompat.Builder().run {
+                        when (state) {
+                            PlaybackStateCompat.STATE_PLAYING -> {
+                                setActions(PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_STOP)
+                            }
 
-            isActive = true
+                            PlaybackStateCompat.STATE_PAUSED -> {
+                                setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_STOP)
+                            }
+
+                            PlaybackStateCompat.STATE_STOPPED -> {
+                                setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
+                            }
+                        }
+
+                        setState(state, position, 1f)
+                        build()
+                    }
+
+                    setPlaybackState(newState)
+                }
+
+                private fun updateNotification(showPause: Boolean) {
+                    val notification =
+                        MediaNotificationBuilder(applicationContext, this@apply).run {
+                            build(NOTIFICATION_CHANNEL, showPause)
+                        }
+
+                    updateForeground(notification)
+                }
+            })
         }
     }
 
