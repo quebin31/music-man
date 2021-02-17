@@ -9,4 +9,8 @@
     <string name="unknown_number">--</string>
     <string name="unknown_string">Unknown</string>
     <string name="nothing_is_being_played">Nothing is being played …</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="player_channel_name">Media player</string>
+    <string name="player_channel_description">Media player notifications</string>
 </resources>
