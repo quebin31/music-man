@@ -26,15 +26,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUi() {
-        fun setupNavUi() {
-            val appBarConfiguration = AppBarConfiguration(setOf(
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
                 R.id.songs_fragment, R.id.player_fragment
-            ))
+            )
+        )
 
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            binding.navView.setupWithNavController(navController)
-        }
-
-        setupNavUi()
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.navView.setupWithNavController(navController)
     }
 }
