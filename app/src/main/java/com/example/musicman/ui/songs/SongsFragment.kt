@@ -22,7 +22,7 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
     private val songsViewModel by viewModels<SongsViewModel>()
     private val binding by viewBinding(FragmentSongsBinding::bind)
     private val adapter by lazy {
-        SongAdapter(requireContext(), ::onSongItemClick)
+        SongAdapter(::onSongItemClick)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
