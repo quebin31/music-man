@@ -3,33 +3,23 @@ package com.example.musicman.repository
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import android.net.Uri
+import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.example.musicman.R
 import com.example.musicman.extensions.getAndroidUri
 import com.example.musicman.model.Song
 
 class RawSongsRepository(private val context: Context) : SongsRepository {
 
-    private val _latestSong by lazy {
-        MutableLiveData<Song?>().apply {
-            value = getLatestFromPreferences()
-        }
+    override fun getSongs(): LiveData<List<Song>> = liveData {
+        Log.i("Repo", "getSongs: getting songs")
+        emit(listOf("raw1", "raw2", "raw3").mapNotNull { buildSong(it) })
     }
 
-    override fun getSongsIds() = listOf("raw1", "raw2", "raw3")
-
-    override fun getSong(id: String): Song? = buildSongFromMetadata(id)
-
-    override fun getSongs(): List<Song> = getSongsIds().mapNotNull { getSong(it) }
-
-    override fun getSongUri(id: String): Uri? = when (id) {
-        "raw1" -> R.raw.raw1.getAndroidUri(context)
-        "raw2" -> R.raw.raw2.getAndroidUri(context)
-        "raw3" -> R.raw.raw3.getAndroidUri(context)
-        else -> null
+    override fun getSong(id: String): LiveData<Song?> = liveData {
+        emit(buildSong(id))
     }
 
     override fun setLatestPlayedSong(song: Song) {
@@ -37,21 +27,24 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
         prefs.edit(commit = true) {
             putString(KEY_LATEST_SONG, song.id)
         }
-
-        _latestSong.value = song
     }
 
-    override fun getLatestPlayedSong(): LiveData<Song?> = _latestSong
-
-    private fun getLatestFromPreferences(): Song? {
+    override fun getLatestPlayedSong(): LiveData<Song?> = liveData {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val songId = prefs.getString(KEY_LATEST_SONG, null) ?: return null
-        return getSong(songId)
+        val song = prefs.getString(KEY_LATEST_SONG, null)?.let { buildSong(it) }
+        emit(song)
     }
 
-    private fun buildSongFromMetadata(id: String): Song? {
+    private fun buildSong(id: String): Song? {
+        val uri = when (id) {
+            "raw1" -> R.raw.raw1.getAndroidUri(context)
+            "raw2" -> R.raw.raw2.getAndroidUri(context)
+            "raw3" -> R.raw.raw3.getAndroidUri(context)
+            else -> return null
+        }
+
         val metadataRetriever = MediaMetadataRetriever()
-        metadataRetriever.setDataSource(context, getSongUri(id) ?: return null)
+        metadataRetriever.setDataSource(context, uri)
 
         val title = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
         val album = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
@@ -69,7 +62,7 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
             BitmapFactory.decodeByteArray(it, 0, it.size)
         }
 
-        return Song(id, title, album, artist, albumArtist, track, disk, artworkBitmap)
+        return Song(id, uri, title, album, artist, albumArtist, track, disk, artworkBitmap)
     }
 
     companion object {
