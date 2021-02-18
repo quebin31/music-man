@@ -1,6 +1,5 @@
 package com.example.musicman.ui.player
 
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.musicman.model.Song
@@ -16,7 +15,5 @@ class PlayerViewModel : ViewModel() {
         repository.setLatestPlayedSong(song)
     }
 
-    fun getSongUri(song: Song): Uri? = repository.getSongUri(song.id)
-
-    fun getSong(songId: String): Song? = repository.getSong(songId)
+    fun getSong(songId: String) = repository.getSong(songId)
 }
