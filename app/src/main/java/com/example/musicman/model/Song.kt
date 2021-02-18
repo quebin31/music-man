@@ -21,18 +21,20 @@ data class Song(
 
     fun asMediaMetadata(context: Context): MediaMetadataCompat {
         val unknown = context.getString(R.string.unknown_string)
-        val defaultArtwork =
+        val defaultArtwork by lazy {
             BitmapFactory.decodeResource(context.resources, R.drawable.default_album_artwork)
+        }
 
-        return MediaMetadataCompat.Builder()
-            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title ?: unknown)
-            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title ?: unknown)
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist ?: unknown)
-            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album ?: unknown)
-            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, albumArtist ?: unknown)
-            .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, track?.toLong() ?: 0L)
-            .putLong(MediaMetadataCompat.METADATA_KEY_DISC_NUMBER, disk?.toLong() ?: 0L)
-            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artworkBitmap ?: defaultArtwork)
-            .build()
+        return MediaMetadataCompat.Builder().run {
+            putString(MediaMetadataCompat.METADATA_KEY_TITLE, title ?: unknown)
+            putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title ?: unknown)
+            putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist ?: unknown)
+            putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album ?: unknown)
+            putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, albumArtist ?: unknown)
+            putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, track?.toLong() ?: 0L)
+            putLong(MediaMetadataCompat.METADATA_KEY_DISC_NUMBER, disk?.toLong() ?: 0L)
+            putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artworkBitmap ?: defaultArtwork)
+            build()
+        }
     }
 }
