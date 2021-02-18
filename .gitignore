@@ -87,3 +87,5 @@ lint/tmp/
 # Android Profiling
 *.hprof
 
+# Files not allowed to share
+**/raw/*.mp3
