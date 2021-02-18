@@ -99,9 +99,11 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
         // Change latest played song if received by args and (maybe) start playing it
         arguments?.getString(ARG_SONG_ID)?.let {
-            playerViewModel.getSong(it)?.let { song ->
-                startPlayingSong(song)
-                playerViewModel.setLatestPlayedSong(song)
+            playerViewModel.getSong(it).observe(viewLifecycleOwner) { song ->
+                song?.let {
+                    startPlayingSong(song)
+                    playerViewModel.setLatestPlayedSong(song)
+                }
             }
         }
 
@@ -119,7 +121,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         val state = mediaController.playbackState.state
         // Nothing is being played, or this song is different from the latest one
         if (state == PlaybackStateCompat.STATE_NONE || state == PlaybackStateCompat.STATE_STOPPED || song != playerViewModel.latestPlayedSong.value) {
-            val uri = playerViewModel.getSongUri(song)
+            val uri = song.uri
             val bundle =
                 bundleOf(MusicPlayerService.KEY_METADATA to song.asMediaMetadata(requireContext()))
 
