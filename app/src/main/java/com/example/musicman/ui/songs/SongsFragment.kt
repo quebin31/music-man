@@ -31,7 +31,9 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
         binding.songsList.layoutManager = LinearLayoutManager(requireActivity())
         binding.songsList.adapter = adapter
         binding.songsList.addItemDecoration(SimpleItemDecoration(resources.getDimensionPixelSize(R.dimen.padding_half)))
-        adapter.updateSongs(songsViewModel.songs)
+        songsViewModel.songs.observe(viewLifecycleOwner) {
+            adapter.updateSongs(it)
+        }
     }
 
     private fun onSongItemClick(song: Song) {
