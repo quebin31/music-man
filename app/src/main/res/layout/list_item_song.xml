@@ -6,7 +6,7 @@
     android:layout_height="@dimen/album_image_size">
 
     <ImageView
-        android:id="@+id/albumArtwork"
+        android:id="@+id/songAlbumArtwork"
         android:layout_width="98dp"
         android:layout_height="98dp"
         android:layout_margin="@dimen/padding_standard"
@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toTopOf="@+id/songArtistAlbum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/albumArtwork"
+        app:layout_constraintStart_toEndOf="@+id/songAlbumArtwork"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Song Title" />
@@ -50,7 +50,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/albumArtwork"
+        app:layout_constraintStart_toEndOf="@+id/songAlbumArtwork"
         app:layout_constraintTop_toBottomOf="@+id/songTitle"
         tools:text="Song Artist - Song Album" />
 
