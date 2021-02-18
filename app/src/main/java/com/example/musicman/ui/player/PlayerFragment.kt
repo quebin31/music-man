@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -91,7 +90,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 PlaybackStateCompat.STATE_NONE, PlaybackStateCompat.STATE_STOPPED -> {
                     playerViewModel.latestPlayedSong.value?.let { startPlayingSong(it) }
                 }
-                else -> Log.w(TAG, "setupTransportControls: Cannot play something", )
+                else -> Log.w(TAG, "setupTransportControls: Cannot play")
             }
         }
 
