@@ -14,7 +14,7 @@ import com.example.musicman.model.Song
 
 class RawSongsRepository(private val context: Context) : SongsRepository {
 
-    private val _currentSong by lazy {
+    private val _latestSong by lazy {
         MutableLiveData<Song?>().apply {
             value = getLatestFromPreferences()
         }
@@ -22,42 +22,7 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
 
     override fun getSongsIds() = listOf("raw1", "raw2", "raw3")
 
-    override fun getSong(id: String): Song? = when (id) {
-        "raw1" -> Song(
-            id,
-            "El Mundo Extraño",
-            "La Sintesis O'Konor",
-            "El Mató a un Policía Motorizado",
-            "El Mató a un Policía Motorizado",
-            9,
-            1,
-            getAlbumArtwork(id)
-        )
-
-        "raw2" -> Song(
-            id,
-            "El Tesoro",
-            "La Sintesis O'Konor",
-            "El Mató a un Policía Motorizado",
-            "El Mató a un Policía Motorizado",
-            1,
-            1,
-            getAlbumArtwork(id)
-        )
-
-        "raw3" -> Song(
-            id,
-            "Espacio Vacío",
-            "Espacio Vacío",
-            "El Mató a un Policía Motorizado",
-            "El Mató a un Policía Motorizado, Carolina Durante",
-            1,
-            1,
-            getAlbumArtwork(id)
-        )
-
-        else -> null
-    }
+    override fun getSong(id: String): Song? = buildSongFromMetadata(id)
 
     override fun getSongs(): List<Song> = getSongsIds().mapNotNull { getSong(it) }
 
@@ -71,28 +36,45 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
     override fun setLatestPlayedSong(song: Song) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         prefs.edit(commit = true) {
-            putString("current_song", song.id)
+            putString(KEY_LATEST_SONG, song.id)
         }
 
-        _currentSong.value = song
+        _latestSong.value = song
     }
 
-    override fun getLatestPlayedSong(): LiveData<Song?> = _currentSong
+    override fun getLatestPlayedSong(): LiveData<Song?> = _latestSong
 
     private fun getLatestFromPreferences(): Song? {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val songId = prefs.getString("current_song", null) ?: return null
+        val songId = prefs.getString(KEY_LATEST_SONG, null) ?: return null
         return getSong(songId)
     }
 
-    private fun getAlbumArtwork(id: String): Bitmap? {
+    private fun buildSongFromMetadata(id: String): Song? {
         val metadataRetriever = MediaMetadataRetriever()
         metadataRetriever.setDataSource(context, getSongUri(id) ?: return null)
-        val pictureBytes = metadataRetriever.embeddedPicture
-        return BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes?.size ?: return null)
+
+        val title = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+        val album = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+        val artist = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+        val albumArtist =
+            metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
+        val track =
+            metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)
+                ?.toIntOrNull()
+        val disk =
+            metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
+                ?.toIntOrNull()
+
+        val artworkBitmap = metadataRetriever.embeddedPicture?.let {
+            BitmapFactory.decodeByteArray(it, 0, it.size)
+        }
+
+        return Song(id, title, album, artist, albumArtist, track, disk, artworkBitmap)
     }
 
     companion object {
-        const val PREFS = "RawRepositoryPreferences"
+        private const val PREFS = "RawRepositoryPreferences"
+        private const val KEY_LATEST_SONG = "latest_song"
     }
 }
