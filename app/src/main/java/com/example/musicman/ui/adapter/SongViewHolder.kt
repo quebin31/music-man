@@ -1,6 +1,5 @@
 package com.example.musicman.ui.adapter
 
-import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicman.R
 import com.example.musicman.databinding.ListItemSongBinding
@@ -10,10 +9,11 @@ import com.example.musicman.model.Song
 class SongViewHolder(private val binding: ListItemSongBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(context: Context, song: Song, onItemClick: (Song) -> Unit) {
+    fun bind(song: Song, onItemClick: (Song) -> Unit) {
+        val context = itemView.context
         val unknownString = context.getString(R.string.unknown_string)
 
-        song.artworkBitmap?.let { binding.albumArtwork.setImageBitmap(it)    }
+        song.artworkBitmap?.let { binding.songAlbumArtwork.setImageBitmap(it) }
         binding.songTitle.text = song.title ?: unknownString
 
         val artist = song.effectiveArtist ?: unknownString
@@ -23,3 +23,4 @@ class SongViewHolder(private val binding: ListItemSongBinding) :
         binding.root.setOnClickListener { onItemClick(song) }
     }
 }
+
