@@ -1,7 +1,6 @@
 package com.example.musicman.repository
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -27,9 +26,9 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
     override fun getSongs(): List<Song> = getSongsIds().mapNotNull { getSong(it) }
 
     override fun getSongUri(id: String): Uri? = when (id) {
-        "raw1" -> R.raw.el_mundo_extrano.getAndroidUri(context)
-        "raw2" -> R.raw.el_tesoro.getAndroidUri(context)
-        "raw3" -> R.raw.espacio_vacio.getAndroidUri(context)
+        "raw1" -> R.raw.raw1.getAndroidUri(context)
+        "raw2" -> R.raw.raw2.getAndroidUri(context)
+        "raw3" -> R.raw.raw3.getAndroidUri(context)
         else -> null
     }
 
