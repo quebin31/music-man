@@ -1,6 +1,7 @@
 package com.example.musicman.extensions
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 
 fun Context.showToast(msg: String, short: Boolean = true) {
@@ -8,4 +9,6 @@ fun Context.showToast(msg: String, short: Boolean = true) {
     Toast.makeText(this, msg, length).show()
 }
 
+fun Context.getAndroidUri(resId: Int): Uri =
+    Uri.parse("android.resource://${this.packageName}/${resId}")
 

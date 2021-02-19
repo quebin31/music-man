@@ -8,12 +8,13 @@ import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.example.musicman.R
-import com.example.musicman.extensions.getAndroidUri
+import com.example.musicman.extensions.*
 import com.example.musicman.model.Song
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class RawSongsRepository @Inject constructor(@ApplicationContext private val context: Context) : SongsRepository {
+class RawSongsRepository @Inject constructor(@ApplicationContext private val context: Context) :
+    SongsRepository {
 
     override fun getSongs(): LiveData<List<Song>> = liveData {
         Log.i("Repo", "getSongs: getting songs")
@@ -37,9 +38,9 @@ class RawSongsRepository @Inject constructor(@ApplicationContext private val con
 
     private fun buildSong(id: String): Song? {
         val uri = when (id) {
-            "raw1" -> R.raw.raw1.getAndroidUri(context)
-            "raw2" -> R.raw.raw2.getAndroidUri(context)
-            "raw3" -> R.raw.raw3.getAndroidUri(context)
+            "raw1" -> context.getAndroidUri(R.raw.raw1)
+            "raw2" -> context.getAndroidUri(R.raw.raw2)
+            "raw3" -> context.getAndroidUri(R.raw.raw3)
             else -> return null
         }
 
