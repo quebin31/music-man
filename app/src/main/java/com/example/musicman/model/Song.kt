@@ -17,7 +17,7 @@ data class Song(
     val albumArtist: String?,
     val track: Long?,
     val disc: Long?,
-    val albumArt: Bitmap?
+    val albumArt: Bitmap?,
 ) {
     val effectiveArtist: String? get() = albumArtist ?: artist
 

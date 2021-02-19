@@ -44,26 +44,19 @@ class RawSongsRepository @Inject constructor(@ApplicationContext private val con
             else -> return null
         }
 
-        val metadataRetriever = MediaMetadataRetriever()
-        metadataRetriever.setDataSource(context, uri)
-
-        val title = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-        val album = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
-        val artist = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
-        val albumArtist =
-            metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
-        val track =
-            metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)
-                ?.toLongOrNull()
-        val disk =
-            metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
-                ?.toLongOrNull()
-
-        val artworkBitmap = metadataRetriever.embeddedPicture?.let {
-            BitmapFactory.decodeByteArray(it, 0, it.size)
+        val metadataRetriever = MediaMetadataRetriever().apply {
+            setDataSource(context, uri)
         }
 
-        return Song(id, uri, title, album, artist, albumArtist, track, disk, artworkBitmap)
+        val title = metadataRetriever.title
+        val album = metadataRetriever.album
+        val artist = metadataRetriever.artist
+        val albumArtist = metadataRetriever.albumArtist
+        val track = metadataRetriever.track
+        val disc = metadataRetriever.disc
+        val artworkBitmap = metadataRetriever.albumArt
+
+        return Song(id, uri, title, album, artist, albumArtist, track, disc, artworkBitmap)
     }
 
     companion object {
