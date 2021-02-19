@@ -99,29 +99,31 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         // Change latest played song if received by args and (maybe) start playing it
         arguments.songId?.let {
             playerViewModel.getSong(it)?.let { song ->
-                playerViewModel.setLatestPlayedSong(song)
+                playerViewModel.setLatestPlayedSong(song.id)
                 maybePlaySong(song)
             }
         }
 
-        playerViewModel.latestPlayedSong.observe(viewLifecycleOwner) { song ->
-            if (song == null) {
+        playerViewModel.latestPlayedSong.observe(viewLifecycleOwner) { songId ->
+            if (songId == null) {
                 showNothingIsPlaying()
                 return@observe
             }
 
-            showSongInformation(song)
+            playerViewModel.getSong(songId)?.let { song ->
+                showSongInformation(song)
 
-            binding.playButton.setOnClickListener {
-                when (mediaController.playbackState.state) {
-                    PlaybackStateCompat.STATE_NONE -> maybePlaySong(song)
-                    PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
-                    PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
-                    PlaybackStateCompat.STATE_STOPPED -> {
-                        mediaController.transportControls.seekTo(0L)
-                        mediaController.transportControls.play()
+                binding.playButton.setOnClickListener {
+                    when (mediaController.playbackState.state) {
+                        PlaybackStateCompat.STATE_NONE -> maybePlaySong(song)
+                        PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
+                        PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
+                        PlaybackStateCompat.STATE_STOPPED -> {
+                            mediaController.transportControls.seekTo(0L)
+                            mediaController.transportControls.play()
+                        }
+                        else -> Log.w(TAG, "setupTransportControls: Nothing to do")
                     }
-                    else -> Log.w(TAG, "setupTransportControls: Nothing to do")
                 }
             }
         }
