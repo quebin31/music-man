@@ -53,10 +53,10 @@ class RawSongsRepository @Inject constructor(@ApplicationContext private val con
             metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
         val track =
             metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)
-                ?.toIntOrNull()
+                ?.toLongOrNull()
         val disk =
             metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
-                ?.toIntOrNull()
+                ?.toLongOrNull()
 
         val artworkBitmap = metadataRetriever.embeddedPicture?.let {
             BitmapFactory.decodeByteArray(it, 0, it.size)
