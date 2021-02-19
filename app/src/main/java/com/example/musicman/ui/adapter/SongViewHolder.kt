@@ -3,7 +3,7 @@ package com.example.musicman.ui.adapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicman.R
 import com.example.musicman.databinding.ListItemSongBinding
-import com.example.musicman.model.Song
+import com.example.musicman.room.Song
 
 
 class SongViewHolder(private val binding: ListItemSongBinding) :

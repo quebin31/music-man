@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicman.databinding.ListItemSongBinding
-import com.example.musicman.model.Song
+import com.example.musicman.room.Song
 
 class SongAdapter(private val onItemClick: (Song) -> Unit) :
     RecyclerView.Adapter<SongViewHolder>() {

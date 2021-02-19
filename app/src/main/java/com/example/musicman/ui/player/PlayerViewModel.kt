@@ -3,7 +3,6 @@ package com.example.musicman.ui.player
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.musicman.model.Song
 import com.example.musicman.repository.SongsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

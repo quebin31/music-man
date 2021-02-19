@@ -1,15 +1,18 @@
-package com.example.musicman.model
+package com.example.musicman.room
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.musicman.R
 import com.example.musicman.extensions.*
 
+@Entity
 data class Song(
-    val id: String,
+    @PrimaryKey val id: String,
     val uri: Uri,
     val title: String?,
     val album: String?,

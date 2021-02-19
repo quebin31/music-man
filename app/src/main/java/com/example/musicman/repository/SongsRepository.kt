@@ -1,7 +1,7 @@
 package com.example.musicman.repository
 
 import androidx.lifecycle.LiveData
-import com.example.musicman.model.Song
+import com.example.musicman.room.Song
 
 interface SongsRepository {
     /** Get all songs */

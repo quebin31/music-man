@@ -12,7 +12,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import com.example.musicman.R
 import com.example.musicman.extensions.*
-import com.example.musicman.model.Song
+import com.example.musicman.room.Song
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

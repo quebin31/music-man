@@ -17,7 +17,7 @@ import com.example.musicman.R
 import com.example.musicman.databinding.FragmentPlayerBinding
 import com.example.musicman.extensions.id
 import com.example.musicman.extensions.showToast
-import com.example.musicman.model.Song
+import com.example.musicman.room.Song
 import com.example.musicman.player.MusicPlayerService
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
