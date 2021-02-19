@@ -12,6 +12,7 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.example.musicman.R
 import com.example.musicman.databinding.FragmentPlayerBinding
 import com.example.musicman.extensions.showShortToast
@@ -26,7 +27,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private lateinit var mediaBrowser: MediaBrowserCompat
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val binding by viewBinding(FragmentPlayerBinding::bind)
-    private lateinit var mediaBrowser: MediaBrowserCompat
+    private val arguments by navArgs<PlayerFragmentArgs>()
     private val mediaController
         get() = MediaControllerCompat.getMediaController(requireActivity())
 
@@ -100,14 +101,14 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         val state = mediaController.playbackState.state
         togglePlayPauseButton(state)
 
-        // Change latest played song if received by args and (maybe) start playing it
-        arguments?.getString(ARG_SONG_ID)?.let {
+        // Change latest played song if received by args
+        arguments.songId?.let {
             playerViewModel.getSong(it)?.let { song ->
                 playerViewModel.setLatestPlayedSong(song)
             }
         }
 
-        // Update ui whenever latest played song changes
+        // Update ui whenever latest played song changes and maybe start playing it
         playerViewModel.latestPlayedSong.observe(viewLifecycleOwner) { song ->
             if (song == null) {
                 showNothingIsPlaying()
@@ -167,6 +168,5 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     companion object {
         private const val TAG = "PlayerFragment"
-        const val ARG_SONG_ID = "song_id"
     }
 }

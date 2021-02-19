@@ -11,7 +11,7 @@
         android:label="@string/title_songs"
         tools:layout="@layout/fragment_songs">
         <action
-            android:id="@+id/navigate_to_player"
+            android:id="@+id/play_song"
             app:destination="@id/player_fragment" />
     </fragment>
 
@@ -23,6 +23,7 @@
         <argument
             android:name="song_id"
             android:defaultValue="@null"
+            app:nullable="true"
             app:argType="string" />
     </fragment>
 

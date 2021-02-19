@@ -36,7 +36,7 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
     }
 
     private fun onSongItemClick(song: Song) {
-        val bundle = bundleOf(PlayerFragment.ARG_SONG_ID to song.id)
-        findNavController().navigate(R.id.navigate_to_player, bundle)
+        val action = SongsFragmentDirections.playSong(song.id)
+        findNavController().navigate(action)
     }
 }
