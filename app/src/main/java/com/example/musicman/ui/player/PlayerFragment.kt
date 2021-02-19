@@ -15,7 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.musicman.R
 import com.example.musicman.databinding.FragmentPlayerBinding
-import com.example.musicman.extensions.showShortToast
+import com.example.musicman.extensions.showToast
 import com.example.musicman.model.Song
 import com.example.musicman.player.MusicPlayerService
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -41,7 +41,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         }
 
         override fun onConnectionFailed() {
-            "Connection to service failed".showShortToast(requireContext())
+            requireContext().showToast("Connection to music service failed")
             showNothingIsPlaying()
         }
     }
