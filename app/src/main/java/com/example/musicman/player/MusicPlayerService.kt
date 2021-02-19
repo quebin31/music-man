@@ -82,6 +82,14 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                         Log.w(TAG, "onStop: media player is on invalid state")
                     }
                 }
+
+                override fun onSeekTo(pos: Long) {
+                    try {
+                        mediaPlayer.seekTo(pos.toInt())
+                    } catch (e: IllegalStateException) {
+                        Log.w(TAG, "onSeekTo: media player is on invalid state")
+                    }
+                }
             })
         }
 
