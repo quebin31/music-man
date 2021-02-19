@@ -4,8 +4,15 @@ import androidx.lifecycle.LiveData
 import com.example.musicman.model.Song
 
 interface SongsRepository {
-    fun getSongs(): LiveData<List<Song>>
-    fun getSong(id: String): Song?
-    fun getLatestPlayedSong(): LiveData<Song?>
-    fun setLatestPlayedSong(song: Song)
+    /** Get all songs */
+    val songs: LiveData<List<Song>>
+
+    /** Get latest played song id */
+    val latestPlayedSong: LiveData<String?>
+
+    /** Get an specific song by its [id] */
+    operator fun get(id: String): Song?
+
+    /** Set the latest played song by its [id] */
+    suspend fun setLatestPlayedSong(id: String)
 }
