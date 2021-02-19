@@ -9,7 +9,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.musicman.R
 import com.example.musicman.databinding.ActivityMainBinding
 import com.example.musicman.extensions.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val navHostFragment by lazy {

@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.musicman.model.Song
 import com.example.musicman.repository.SongsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PlayerViewModel : ViewModel() {
-    lateinit var repository: SongsRepository
-
+@HiltViewModel
+class PlayerViewModel @Inject constructor(private val repository: SongsRepository) : ViewModel() {
     val latestPlayedSong: LiveData<Song?>
         get() = repository.getLatestPlayedSong()
 

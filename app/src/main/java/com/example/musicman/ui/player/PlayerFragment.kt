@@ -17,11 +17,13 @@ import com.example.musicman.databinding.FragmentPlayerBinding
 import com.example.musicman.extensions.showShortToast
 import com.example.musicman.model.Song
 import com.example.musicman.player.MusicPlayerService
-import com.example.musicman.repository.RawSongsRepository
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
+    private lateinit var mediaBrowser: MediaBrowserCompat
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val binding by viewBinding(FragmentPlayerBinding::bind)
     private lateinit var mediaBrowser: MediaBrowserCompat
@@ -53,7 +55,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        playerViewModel.repository = RawSongsRepository(requireContext())
         setupMediaBrowser()
     }
 
@@ -69,8 +70,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     override fun onStop() {
         super.onStop()
-        mediaBrowser.disconnect()
         mediaController.unregisterCallback(mediaCallback)
+        mediaBrowser.disconnect()
     }
 
     private fun setupMediaBrowser() {

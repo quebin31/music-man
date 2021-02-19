@@ -12,11 +12,12 @@ import com.example.musicman.R
 import com.example.musicman.databinding.FragmentSongsBinding
 import com.example.musicman.ui.decorations.SimpleItemDecoration
 import com.example.musicman.model.Song
-import com.example.musicman.repository.RawSongsRepository
 import com.example.musicman.ui.adapter.SongAdapter
 import com.example.musicman.ui.player.PlayerFragment
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SongsFragment : Fragment(R.layout.fragment_songs) {
 
     private val songsViewModel by viewModels<SongsViewModel>()
@@ -26,8 +27,6 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        songsViewModel.repository = RawSongsRepository(requireContext())
-
         binding.songsList.layoutManager = LinearLayoutManager(requireActivity())
         binding.songsList.adapter = adapter
         binding.songsList.addItemDecoration(SimpleItemDecoration(resources.getDimensionPixelSize(R.dimen.padding_half)))

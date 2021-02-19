@@ -10,8 +10,10 @@ import androidx.lifecycle.liveData
 import com.example.musicman.R
 import com.example.musicman.extensions.getAndroidUri
 import com.example.musicman.model.Song
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class RawSongsRepository(private val context: Context) : SongsRepository {
+class RawSongsRepository @Inject constructor(@ApplicationContext private val context: Context) : SongsRepository {
 
     override fun getSongs(): LiveData<List<Song>> = liveData {
         Log.i("Repo", "getSongs: getting songs")
