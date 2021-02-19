@@ -13,7 +13,7 @@ class SongViewHolder(private val binding: ListItemSongBinding) :
         val context = itemView.context
         val unknownString = context.getString(R.string.unknown_string)
 
-        song.artworkBitmap?.let { binding.songAlbumArtwork.setImageBitmap(it) }
+        song.albumArt?.let { binding.songAlbumArtwork.setImageBitmap(it) }
         binding.songTitle.text = song.title ?: unknownString
 
         val artist = song.effectiveArtist ?: unknownString
