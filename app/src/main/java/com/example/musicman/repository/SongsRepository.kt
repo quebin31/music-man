@@ -5,7 +5,7 @@ import com.example.musicman.model.Song
 
 interface SongsRepository {
     fun getSongs(): LiveData<List<Song>>
-    fun getSong(id: String): LiveData<Song?>
+    fun getSong(id: String): Song?
     fun getLatestPlayedSong(): LiveData<Song?>
     fun setLatestPlayedSong(song: Song)
 }

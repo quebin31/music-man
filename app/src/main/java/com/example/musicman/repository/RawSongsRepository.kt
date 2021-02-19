@@ -18,9 +18,7 @@ class RawSongsRepository(private val context: Context) : SongsRepository {
         emit(listOf("raw1", "raw2", "raw3").mapNotNull { buildSong(it) })
     }
 
-    override fun getSong(id: String): LiveData<Song?> = liveData {
-        emit(buildSong(id))
-    }
+    override fun getSong(id: String) = buildSong(id)
 
     override fun setLatestPlayedSong(song: Song) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
