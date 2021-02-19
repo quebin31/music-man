@@ -88,8 +88,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             when (mediaController.playbackState.state) {
                 PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
                 PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
-                PlaybackStateCompat.STATE_NONE, PlaybackStateCompat.STATE_STOPPED -> {
-                    playerViewModel.latestPlayedSong.value?.let { maybeStartPlayingSong(it) }
+                PlaybackStateCompat.STATE_STOPPED -> {
+                    mediaController.transportControls.seekTo(0L)
+                    mediaController.transportControls.play()
                 }
                 else -> Log.w(TAG, "setupTransportControls: Cannot play")
             }
