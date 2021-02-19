@@ -23,17 +23,6 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
     override fun onCreate() {
         super.onCreate()
 
-        mediaPlayer.setOnCompletionListener {
-
-            val newState = PlaybackStateCompat.Builder().run {
-                setState(PlaybackStateCompat.STATE_STOPPED, 0L, 1f)
-                setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
-                build()
-            }
-
-            mediaSession?.setPlaybackState(newState)
-        }
-
         mediaSession = MediaSessionCompat(applicationContext, TAG).apply {
             isActive = true
             val playbackState = PlaybackStateCompat.Builder()
@@ -82,7 +71,6 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                     }
                 }
 
-
                 override fun onStop() {
                     try {
                         mediaPlayer.stop()
@@ -94,40 +82,52 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
                         Log.w(TAG, "onStop: media player is on invalid state")
                     }
                 }
-
-                private fun updatePlaybackState(state: Int, position: Long) {
-                    val newState = PlaybackStateCompat.Builder().run {
-                        when (state) {
-                            PlaybackStateCompat.STATE_PLAYING -> {
-                                setActions(PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_STOP)
-                            }
-
-                            PlaybackStateCompat.STATE_PAUSED -> {
-                                setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_STOP)
-                            }
-
-                            PlaybackStateCompat.STATE_STOPPED -> {
-                                setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
-                            }
-                        }
-
-                        setState(state, position, 1f)
-                        build()
-                    }
-
-                    setPlaybackState(newState)
-                }
-
-                private fun updateNotification(showPause: Boolean) {
-                    val notification =
-                        MediaNotificationBuilder(applicationContext, this@apply).run {
-                            build(NOTIFICATION_CHANNEL, showPause)
-                        }
-
-                    updateForeground(notification)
-                }
             })
         }
+
+        mediaPlayer.setOnCompletionListener {
+            updatePlaybackState(PlaybackStateCompat.STATE_STOPPED, 0L)
+            updateNotification(showPause = false)
+        }
+
+        mediaPlayer.setOnErrorListener { mp, _, _ ->
+            mp.reset()
+            updatePlaybackState(PlaybackStateCompat.STATE_STOPPED, 0L)
+            updateNotification(showPause = false)
+            true
+        }
+    }
+
+    private fun updatePlaybackState(state: Int, position: Long) {
+        val newState = PlaybackStateCompat.Builder().run {
+            when (state) {
+                PlaybackStateCompat.STATE_PLAYING -> {
+                    setActions(PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_STOP)
+                }
+
+                PlaybackStateCompat.STATE_PAUSED -> {
+                    setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_STOP)
+                }
+
+                PlaybackStateCompat.STATE_STOPPED -> {
+                    setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
+                }
+            }
+
+            setState(state, position, 1f)
+            build()
+        }
+
+        mediaSession!!.setPlaybackState(newState)
+    }
+
+    private fun updateNotification(showPause: Boolean) {
+        val notification =
+            MediaNotificationBuilder(applicationContext, mediaSession!!).run {
+                build(NOTIFICATION_CHANNEL, showPause)
+            }
+
+        updateForeground(notification)
     }
 
     private fun updateForeground(notification: Notification) {
@@ -169,6 +169,6 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
         const val EMPTY_ROOT_ID = "@empty@"
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL = "com.example.musicman.playerservice"
-        const val KEY_METADATA = "metadata"
+        const val KEY_METADATA = "com.example.musicman.metadata"
     }
 }
