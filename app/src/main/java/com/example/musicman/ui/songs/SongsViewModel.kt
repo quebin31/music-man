@@ -8,5 +8,5 @@ import javax.inject.Inject
 @HiltViewModel
 class SongsViewModel @Inject constructor(private val repository: SongsRepository) : ViewModel() {
 
-    val songs by lazy { repository.getSongs() }
+    val songs by lazy { repository.songs }
 }
