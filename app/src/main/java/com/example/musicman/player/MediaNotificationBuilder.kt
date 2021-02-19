@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.media.session.MediaButtonReceiver
 import com.example.musicman.R
+import com.example.musicman.ui.MainActivity
 
 class MediaNotificationBuilder(
     private val context: Context,
@@ -25,7 +26,7 @@ class MediaNotificationBuilder(
             setSubText(description.description)
             setLargeIcon(description.iconBitmap)
 
-            setContentIntent(controller.sessionActivity)
+            setContentIntent(MainActivity.newPlayerPendingIntent(context))
             setDeleteIntent(
                 MediaButtonReceiver.buildMediaButtonPendingIntent(
                     context,
