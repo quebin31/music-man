@@ -27,6 +27,7 @@ data class Song(
         }
 
         return MediaMetadataCompat.Builder().run {
+            putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, id)
             putString(MediaMetadataCompat.METADATA_KEY_TITLE, title ?: unknown)
             putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title ?: unknown)
             putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist ?: unknown)
