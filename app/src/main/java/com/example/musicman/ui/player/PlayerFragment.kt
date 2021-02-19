@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.musicman.R
 import com.example.musicman.databinding.FragmentPlayerBinding
+import com.example.musicman.extensions.id
 import com.example.musicman.extensions.showToast
 import com.example.musicman.model.Song
 import com.example.musicman.player.MusicPlayerService
@@ -28,8 +29,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val binding by viewBinding(FragmentPlayerBinding::bind)
     private val arguments by navArgs<PlayerFragmentArgs>()
-    private val mediaController
-        get() = MediaControllerCompat.getMediaController(requireActivity())
+    private val mediaController by lazy {
+        MediaControllerCompat.getMediaController(requireActivity())
+    }
 
     private val connectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -51,6 +53,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             super.onPlaybackStateChanged(state)
             state?.state?.let {
                 togglePlayPauseButton(it)
+            }
+        }
+
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            metadata?.let {
+                showSongInformation(Song.fromMediaMetadata(it))
             }
         }
     }
@@ -86,50 +94,44 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private fun setupTransportControls() {
         mediaController.registerCallback(mediaCallback)
-        binding.playButton.setOnClickListener {
-            when (mediaController.playbackState.state) {
-                PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
-                PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
-                PlaybackStateCompat.STATE_STOPPED -> {
-                    mediaController.transportControls.seekTo(0L)
-                    mediaController.transportControls.play()
-                }
-                else -> Log.w(TAG, "setupTransportControls: Cannot play")
-            }
-        }
+        togglePlayPauseButton(mediaController.playbackState.state)
 
-        val state = mediaController.playbackState.state
-        togglePlayPauseButton(state)
-
-        // Change latest played song if received by args
+        // Change latest played song if received by args and (maybe) start playing it
         arguments.songId?.let {
             playerViewModel.getSong(it)?.let { song ->
                 playerViewModel.setLatestPlayedSong(song)
+                maybePlaySong(song)
             }
         }
 
-        // Update ui whenever latest played song changes and maybe start playing it
         playerViewModel.latestPlayedSong.observe(viewLifecycleOwner) { song ->
             if (song == null) {
                 showNothingIsPlaying()
-            } else {
-                showSongInformation(song)
-                maybeStartPlayingSong(song)
+                return@observe
+            }
+
+            showSongInformation(song)
+
+            binding.playButton.setOnClickListener {
+                when (mediaController.playbackState.state) {
+                    PlaybackStateCompat.STATE_NONE -> maybePlaySong(song)
+                    PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
+                    PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
+                    PlaybackStateCompat.STATE_STOPPED -> {
+                        mediaController.transportControls.seekTo(0L)
+                        mediaController.transportControls.play()
+                    }
+                    else -> Log.w(TAG, "setupTransportControls: Nothing to do")
+                }
             }
         }
     }
 
-    private fun maybeStartPlayingSong(song: Song) {
-        val state = mediaController.playbackState.state
-        val currentSongId = mediaController.metadata?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
-
-        // Nothing is being played, or this song is different from the latest one
-        if (state == PlaybackStateCompat.STATE_NONE || state == PlaybackStateCompat.STATE_STOPPED || song.id != currentSongId) {
+    private fun maybePlaySong(song: Song) {
+        if (song.id != mediaController.metadata?.id) {
             val uri = song.uri
             val bundle =
-                bundleOf(
-                    MusicPlayerService.KEY_METADATA to song.asMediaMetadata(requireContext()),
-                )
+                bundleOf(MusicPlayerService.KEY_METADATA to song.asMediaMetadata(requireContext()))
 
             mediaController.transportControls.prepareFromUri(uri, bundle)
             mediaController.transportControls.play()
@@ -145,17 +147,17 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding.nothingPlaying.visibility = View.GONE
         binding.playerGroup.visibility = View.VISIBLE
 
-        val unknownString = requireContext().getString(R.string.unknown_string)
+        val unknown = requireContext().getString(R.string.unknown_string)
 
-        song.artworkBitmap?.let { binding.songAlbumArtwork.setImageBitmap(it) }
-        binding.songTitle.text = song.title ?: unknownString
-        binding.songArtist.text = song.effectiveArtist ?: unknownString
-        binding.songAlbum.text = song.album ?: unknownString
+        song.albumArt?.let { binding.songAlbumArtwork.setImageBitmap(it) }
+        binding.songTitle.text = song.title ?: unknown
+        binding.songArtist.text = song.effectiveArtist ?: unknown
+        binding.songAlbum.text = song.album ?: unknown
 
         val unknownNumber = requireContext().getString(R.string.unknown_number)
         val track = song.track?.toString() ?: unknownNumber
-        val disk = song.disk?.toString() ?: unknownNumber
-        binding.songTrackDisk.text = requireContext().getString(R.string.track_disk, track, disk)
+        val disc = song.disc?.toString() ?: unknownNumber
+        binding.songTrackDisk.text = requireContext().getString(R.string.track_disc, track, disc)
     }
 
     private fun togglePlayPauseButton(state: Int) {
