@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -88,7 +89,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
                 PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
                 PlaybackStateCompat.STATE_NONE, PlaybackStateCompat.STATE_STOPPED -> {
-                    playerViewModel.latestPlayedSong.value?.let { startPlayingSong(it) }
+                    playerViewModel.latestPlayedSong.value?.let { maybeStartPlayingSong(it) }
                 }
                 else -> Log.w(TAG, "setupTransportControls: Cannot play")
             }
@@ -99,11 +100,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
         // Change latest played song if received by args and (maybe) start playing it
         arguments?.getString(ARG_SONG_ID)?.let {
-            playerViewModel.getSong(it).observe(viewLifecycleOwner) { song ->
-                song?.let {
-                    startPlayingSong(song)
-                    playerViewModel.setLatestPlayedSong(song)
-                }
+            playerViewModel.getSong(it)?.let { song ->
+                playerViewModel.setLatestPlayedSong(song)
             }
         }
 
@@ -113,17 +111,22 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 showNothingIsPlaying()
             } else {
                 showSongInformation(song)
+                maybeStartPlayingSong(song)
             }
         }
     }
 
-    private fun startPlayingSong(song: Song) {
+    private fun maybeStartPlayingSong(song: Song) {
         val state = mediaController.playbackState.state
+        val currentSongId = mediaController.metadata?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
+
         // Nothing is being played, or this song is different from the latest one
-        if (state == PlaybackStateCompat.STATE_NONE || state == PlaybackStateCompat.STATE_STOPPED || song != playerViewModel.latestPlayedSong.value) {
+        if (state == PlaybackStateCompat.STATE_NONE || state == PlaybackStateCompat.STATE_STOPPED || song.id != currentSongId) {
             val uri = song.uri
             val bundle =
-                bundleOf(MusicPlayerService.KEY_METADATA to song.asMediaMetadata(requireContext()))
+                bundleOf(
+                    MusicPlayerService.KEY_METADATA to song.asMediaMetadata(requireContext()),
+                )
 
             mediaController.transportControls.prepareFromUri(uri, bundle)
             mediaController.transportControls.play()
