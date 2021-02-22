@@ -5,22 +5,24 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.example.musicman.R
 import com.example.musicman.extensions.*
 
-@Entity
+@Entity(tableName = "songs")
 data class Song(
     @PrimaryKey val id: String,
     val uri: Uri,
     val title: String?,
     val album: String?,
     val artist: String?,
-    val albumArtist: String?,
+    @ColumnInfo(name = "album_artist") val albumArtist: String?,
     val track: Long?,
     val disc: Long?,
-    val albumArt: Bitmap?,
+    @Ignore val albumArt: Bitmap?,
 ) {
     val effectiveArtist: String? get() = albumArtist ?: artist
 
