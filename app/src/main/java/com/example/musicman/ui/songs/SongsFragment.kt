@@ -2,6 +2,7 @@ package com.example.musicman.ui.songs
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -23,7 +24,9 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
     private val songsViewModel by viewModels<SongsViewModel>()
     private val binding by viewBinding(FragmentSongsBinding::bind)
     private val adapter by lazy {
-        SongAdapter(::onSongItemClick)
+        SongAdapter {
+            songsViewModel.songItemClicked(it.id)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,12 +34,20 @@ class SongsFragment : Fragment(R.layout.fragment_songs) {
         binding.songsList.adapter = adapter
         binding.songsList.addItemDecoration(SimpleItemDecoration(resources.getDimensionPixelSize(R.dimen.padding_half)))
         songsViewModel.songs.observe(viewLifecycleOwner) {
+            Log.i(TAG, "songs observer: got list")
             adapter.updateSongs(it)
+        }
+
+        songsViewModel.navigateToPlayer.observe(viewLifecycleOwner) {
+            Log.i(TAG, "navigateToPlayer observer: (event consumed = ${it.consumed})")
+            it.consume()?.let { id ->
+                val action = SongsFragmentDirections.playSong(id)
+                findNavController().navigate(action)
+            }
         }
     }
 
-    private fun onSongItemClick(song: Song) {
-        val action = SongsFragmentDirections.playSong(song.id)
-        findNavController().navigate(action)
+    companion object {
+        private const val TAG = "SongsFragment"
     }
 }
