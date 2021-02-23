@@ -21,26 +21,34 @@ class MusicPlayerClient(context: Context, serviceComponent: ComponentName) {
         postValue(null)
     }
 
+    val metadata: MediaMetadataCompat?
+        get() = mediaController.metadata
+
+    private val controllerCallback = ControllerCallback()
     private lateinit var mediaController: MediaControllerCompat
-    val transportControls get() = mediaController.transportControls
+    val transportControls: MediaControllerCompat.TransportControls
+        get() = mediaController.transportControls
 
     private val connectionCallback = ConnectionCallback(context)
-    private val mediaBrowser = MediaBrowserCompat(context, serviceComponent, connectionCallback, null).apply {
-        connect()
-    }
+    private val mediaBrowser =
+        MediaBrowserCompat(context, serviceComponent, connectionCallback, null)
 
     private inner class ConnectionCallback(private val context: Context) :
         MediaBrowserCompat.ConnectionCallback() {
 
         override fun onConnected() {
             mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
-                registerCallback(ControllerCallback())
+                registerCallback(controllerCallback)
             }
 
+            // Let them now the connection state and playback state
             isConnected.postValue(true)
+            playbackState.postValue(mediaController.playbackState)
+            nowPlaying.postValue(mediaController.metadata)
         }
 
         override fun onConnectionSuspended() {
+            mediaController.unregisterCallback(controllerCallback)
             isConnected.postValue(false)
         }
 
@@ -61,5 +69,13 @@ class MusicPlayerClient(context: Context, serviceComponent: ComponentName) {
         override fun onSessionDestroyed() {
             connectionCallback.onConnectionSuspended()
         }
+    }
+
+    fun connect() {
+        mediaBrowser.connect()
+    }
+
+    fun disconnect() {
+        mediaBrowser.disconnect()
     }
 }
