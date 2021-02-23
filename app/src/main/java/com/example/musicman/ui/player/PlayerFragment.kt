@@ -62,20 +62,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             togglePlayPauseButton(state)
         }
 
-        playerClient.nowPlaying.observe(viewLifecycleOwner) { metadata ->
-            if (metadata == null)
-                showNothingIsPlaying()
-            else
-                showSongInformation(Song.fromMediaMetadata(metadata))
-        }
-
-        arguments.songId?.let {
-            playerViewModel.getSong(it)?.let { song ->
-                playerViewModel.setLatestPlayedSong(song.id)
-                maybePlaySong(song)
-            }
-        }
-
         playerViewModel.latestPlayedSong.observe(viewLifecycleOwner) { songId ->
             if (songId == null) {
                 showNothingIsPlaying()
@@ -98,6 +84,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                         else -> Log.w(TAG, "setupTransportControls2: Nothing to do")
                     }
                 }
+            }
+        }
+
+        arguments.songId?.let {
+            playerViewModel.getSong(it)?.let { song ->
+                playerViewModel.setLatestPlayedSong(song.id)
+                maybePlaySong(song)
             }
         }
     }
