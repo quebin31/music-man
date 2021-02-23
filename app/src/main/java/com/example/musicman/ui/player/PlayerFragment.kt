@@ -3,9 +3,6 @@ package com.example.musicman.ui.player
 import android.content.ComponentName
 import android.media.AudioManager
 import android.os.Bundle
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.View
@@ -16,8 +13,8 @@ import androidx.navigation.fragment.navArgs
 import com.example.musicman.R
 import com.example.musicman.databinding.FragmentPlayerBinding
 import com.example.musicman.extensions.id
-import com.example.musicman.extensions.showToast
 import com.example.musicman.model.Song
+import com.example.musicman.player.MusicPlayerClient
 import com.example.musicman.player.MusicPlayerService
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,51 +22,28 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
-    private lateinit var mediaBrowser: MediaBrowserCompat
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val binding by viewBinding(FragmentPlayerBinding::bind)
     private val arguments by navArgs<PlayerFragmentArgs>()
-    private val mediaController by lazy {
-        MediaControllerCompat.getMediaController(requireActivity())
-    }
 
-    private val connectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
-        override fun onConnected() {
-            mediaBrowser.sessionToken.also { sessionToken ->
-                val mediaController = MediaControllerCompat(requireContext(), sessionToken)
-                MediaControllerCompat.setMediaController(requireActivity(), mediaController)
-                setupTransportControls()
-            }
-        }
-
-        override fun onConnectionFailed() {
-            requireContext().showToast("Connection to music service failed")
-            showNothingIsPlaying()
-        }
-    }
-
-    private val mediaCallback = object : MediaControllerCompat.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-            super.onPlaybackStateChanged(state)
-            state?.state?.let {
-                togglePlayPauseButton(it)
-            }
-        }
-
-        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            metadata?.let {
-                showSongInformation(Song.fromMediaMetadata(it))
-            }
-        }
+    private val playerClient by lazy {
+        val context = requireContext()
+        val serviceName = ComponentName(context, MusicPlayerService::class.java)
+        MusicPlayerClient(context, serviceName)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupMediaBrowser()
+        playerClient.isConnected.observe(viewLifecycleOwner) { connected ->
+            when (connected) {
+                true -> setupOnConnection()
+                else -> showNothingIsPlaying()
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        mediaBrowser.connect()
+        playerClient.connect()
     }
 
     override fun onResume() {
@@ -79,24 +53,22 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     override fun onStop() {
         super.onStop()
-        mediaController.unregisterCallback(mediaCallback)
-        mediaBrowser.disconnect()
+        playerClient.disconnect()
     }
 
-    private fun setupMediaBrowser() {
-        mediaBrowser = MediaBrowserCompat(
-            requireActivity(),
-            ComponentName(requireContext(), MusicPlayerService::class.java),
-            connectionCallback,
-            null,
-        )
-    }
+    private fun setupOnConnection() {
+        playerClient.playbackState.observe(viewLifecycleOwner) {
+            val state = it?.state ?: PlaybackStateCompat.STATE_NONE
+            togglePlayPauseButton(state)
+        }
 
-    private fun setupTransportControls() {
-        mediaController.registerCallback(mediaCallback)
-        togglePlayPauseButton(mediaController.playbackState.state)
+        playerClient.nowPlaying.observe(viewLifecycleOwner) { metadata ->
+            if (metadata == null)
+                showNothingIsPlaying()
+            else
+                showSongInformation(Song.fromMediaMetadata(metadata))
+        }
 
-        // Change latest played song if received by args and (maybe) start playing it
         arguments.songId?.let {
             playerViewModel.getSong(it)?.let { song ->
                 playerViewModel.setLatestPlayedSong(song.id)
@@ -114,15 +86,16 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 showSongInformation(song)
 
                 binding.playButton.setOnClickListener {
-                    when (mediaController.playbackState.state) {
+                    when (playerClient.playbackState.value?.state) {
                         PlaybackStateCompat.STATE_NONE -> maybePlaySong(song)
-                        PlaybackStateCompat.STATE_PLAYING -> mediaController.transportControls.pause()
-                        PlaybackStateCompat.STATE_PAUSED -> mediaController.transportControls.play()
+                        PlaybackStateCompat.STATE_PLAYING -> playerClient.transportControls.pause()
+                        PlaybackStateCompat.STATE_PAUSED -> playerClient.transportControls.play()
                         PlaybackStateCompat.STATE_STOPPED -> {
-                            mediaController.transportControls.seekTo(0L)
-                            mediaController.transportControls.play()
+                            playerClient.transportControls.seekTo(0L)
+                            playerClient.transportControls.play()
                         }
-                        else -> Log.w(TAG, "setupTransportControls: Nothing to do")
+
+                        else -> Log.w(TAG, "setupTransportControls2: Nothing to do")
                     }
                 }
             }
@@ -130,13 +103,14 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     }
 
     private fun maybePlaySong(song: Song) {
-        if (song.id != mediaController.metadata?.id) {
+        val currentId = playerClient.metadata?.id
+        if (song.id != currentId) {
             val uri = song.uri
             val bundle =
                 bundleOf(MusicPlayerService.KEY_METADATA to song.asMediaMetadata(requireContext()))
 
-            mediaController.transportControls.prepareFromUri(uri, bundle)
-            mediaController.transportControls.play()
+            playerClient.transportControls.prepareFromUri(uri, bundle)
+            playerClient.transportControls.play()
         }
     }
 
